@@ -2,37 +2,38 @@
 const cardTemplate = document.querySelector('#card-template').content;
 
 // @todo: DOM узлы
+//выбираем место куда выгружается массив
+const placesList = document.querySelector('.places__list');
 
 // @todo: Функция создания карточки
 function createCard (item, deleteCard) {
   //клонирование шаблона карточки
   const patternCard = cardTemplate.querySelector('.card').cloneNode(true);
-  // элементы карточки
-  patternCard.querySelector('.card__image').src = item.link;
-  patternCard.querySelector('.card__title').textContent = item.name;
-  //выбрали кнопку для удаления карточки
+  //определяем переменные для элементов карточки
+  const cardImage = patternCard.querySelector('.card__image');
+  const cardTite = patternCard.querySelector('.card__title');
   const buttonDelete = patternCard.querySelector('.card__delete-button');
+  
+  // элементы карточки
+  cardImage.src = item.link;
+  cardImage.alt = `Изображение места: ${item.name}`;
+  cardTite.textContent = item.name;
   //слушатель на кнопке для удаления
-  buttonDelete.addEventListener('click', deleteCard);   
+  buttonDelete.addEventListener('click', () => deleteCard(patternCard));   
   // получение карточки
   return patternCard;
+  
 }
 
 // @todo: Функция удаления карточки
-function deleteCard (event) {
-  //элемент события на который навели мышку
-  const eventTarget = event.target;
-  //назначение переменной  которая выберет родительские элемент объекта события на котором есть таргет
-  const cardRemove = eventTarget.closest('.card');
+function deleteCard (cardElement) {
   //удаление карточки
-  cardRemove.remove();
+  cardElement.remove();
 }
 
 // @todo: Вывести карточки на страницу
 //элементы массива пропускается через функцию
 initialCards.forEach(function(element) {
-  //выбираем место куда выгружается массив
-  const placesList = document.querySelector('.places__list');
   //выгружаем массив через функцию создания 
   placesList.append(createCard(element, deleteCard))
 })
