@@ -11,13 +11,13 @@ function createCard (item, deleteCard) {
   const patternCard = cardTemplate.querySelector('.card').cloneNode(true);
   //определяем переменные для элементов карточки
   const cardImage = patternCard.querySelector('.card__image');
-  const cardTite = patternCard.querySelector('.card__title');
+  const cardTitel = patternCard.querySelector('.card__title');
   const buttonDelete = patternCard.querySelector('.card__delete-button');
   
   // элементы карточки
   cardImage.src = item.link;
   cardImage.alt = `Изображение места: ${item.name}`;
-  cardTite.textContent = item.name;
+  cardTitel.textContent = item.name;
   //слушатель на кнопке для удаления
   buttonDelete.addEventListener('click', () => deleteCard(patternCard));   
   // получение карточки
