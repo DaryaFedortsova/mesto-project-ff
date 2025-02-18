@@ -1,4 +1,4 @@
-import { cardTemplate } from "./index.js"
+const cardTemplate = document.querySelector("#card-template").content;
 
 // @todo: Функция создания карточки
 function createCard(item, deleteCard, openImagePopup, handleLikeButton) {

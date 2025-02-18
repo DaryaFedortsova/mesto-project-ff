@@ -4,33 +4,36 @@ import { createCard, handleLikeButton, deleteCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
 
 //DOM узлы
-//Темплейт карточки
-export const cardTemplate = document.querySelector("#card-template").content;
+
 //выбираем место куда выгружается массив
 const placesList = document.querySelector(".places__list");
 const editButton = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
-const popupClose = document.querySelectorAll(".popup__close");
 const addButton = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const popups = document.querySelectorAll(".popup");
 
 //Вывести карточки на страницу
-initialCards.forEach(function (element) {
-  placesList.append(
-    createCard(element, deleteCard, openImagePopup, handleLikeButton)
-  );
-});
+initialCards.forEach((item) => renderCard(item, "append"));
 
-// слушатель на окна для звкрытия нажатием вне окна
-document.addEventListener("mousedown", (evt) => {
-  if (evt.target.classList.contains("popup")) {
-    closePopup(evt.target);
-  }
-});
+// универсальная функция добавления карточки
+// функция принимает в вызов карточку и метод вставки
+function renderCard(element, method) {
+  const cardElement = createCard(
+    element,
+    deleteCard,
+    openImagePopup,
+    handleLikeButton
+  );
+  placesList[method](cardElement);
+}
 
 // слушатель на кнопку открытия окна полльзователя
 editButton.addEventListener("click", () => {
   openPopup(popupEdit);
+  // значения в инпутах = значения в профиле
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
 });
 
 // слушатель на кнопку добавления карточки
@@ -38,12 +41,14 @@ addButton.addEventListener("click", () => {
   openPopup(popupNewCard);
 });
 
-//слушатель на кнопку-крестик для открытых окон
-popupClose.forEach((cross) => {
-  cross.addEventListener("click", function (evt) {
-    const element = evt.target.closest(".popup");
-    if (element) {
-      closePopup(element);
+// Закрытие нажатием на оверлей или крест
+popups.forEach((popup) => {
+  popup.addEventListener("mousedown", (evt) => {
+    if (evt.target.classList.contains("popup_is-opened")) {
+      closePopup(popup);
+    }
+    if (evt.target.classList.contains("popup__close")) {
+      closePopup(popup);
     }
   });
 });
@@ -63,18 +68,14 @@ function openImagePopup(item) {
 }
 
 // работа с инпутами в редакторе профиля
-const formElement = document.forms["edit-profile"];
-const nameInput = formElement.elements.name;
-const jobInput = formElement.elements.description;
+const profileForm = document.forms["edit-profile"];
+const nameInput = profileForm.elements.name;
+const jobInput = profileForm.elements.description;
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
-// значения в инпутах = значения в профиле
-nameInput.value = profileTitle.textContent;
-jobInput.value = profileDescription.textContent;
-
 //Обработчик «отправки» формы
-function handleFormSubmit(evt) {
+function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
   // вставить новые значения
@@ -85,7 +86,7 @@ function handleFormSubmit(evt) {
 }
 
 // обработчик формы добавления информации профиля
-formElement.addEventListener("submit", handleFormSubmit);
+profileForm.addEventListener("submit", handleProfileFormSubmit);
 
 // инпуты добавления новой карточки
 const formNewPlase = document.forms["new-place"];
@@ -104,24 +105,21 @@ function handleFormAddCard(evt) {
     link: newImage,
     alt: newPlaceName,
   };
- 
-  //очистка поля
-  placeName.value = "";
-  linkInput.value = "";
 
-  placesList.prepend(createCard(newCard, deleteCard, openImagePopup, handleLikeButton));
+  //очистка поля
+  evt.target.reset();
+
+  renderCard(newCard, "prepend");
   closePopup(popupNewCard);
 }
-
 
 // обработчик формы добавления новой карточки
 formNewPlase.addEventListener("submit", handleFormAddCard);
 
 // плавное открытие
-const popups = document.querySelectorAll(".popup");
-function smoothOpenPopup() {
+function setSmoothPopupOpening() {
   popups.forEach((popup) => {
     popup.classList.add("popup_is-animated");
   });
 }
-smoothOpenPopup();
+setSmoothPopupOpening();
