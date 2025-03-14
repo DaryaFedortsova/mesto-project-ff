@@ -1,13 +1,7 @@
 import { deleteCardApi, putLike, removeLike } from "./api.js";
 const cardTemplate = document.querySelector("#card-template").content;
 // @todo: Функция создания карточки
-function createCard(
-  item,
-  deleteCard,
-  openImagePopup,
-  handleLikeButton,
-  userId
-) {
+function createCard(item, deleteCard, openImagePopup, handleLikeButton, userId) {
   //клонирование шаблона карточки
   const patternCard = cardTemplate.querySelector(".card").cloneNode(true);
   //определяем переменные для элементов карточки

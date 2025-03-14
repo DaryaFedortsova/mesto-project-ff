@@ -1,5 +1,4 @@
 import "../pages/index.css";
-import { initialCards } from "./cards.js";
 import { createCard, handleLikeButton, deleteCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
 import { clearValidation, enableValidation } from "./validation.js";
@@ -27,13 +26,9 @@ const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
-
-//Вывести карточки на страницу
-// initialCards.forEach((item) => renderCard(item, "append"));
 
 // универсальная функция добавления карточки
 // функция принимает в вызов карточку и метод вставки
@@ -50,8 +45,7 @@ function renderCard(element, method) {
 
 profileImage.addEventListener("click", () => {
   openPopup(popupAvatarEdit);
-  clearValidation(popupAvatarEdit);
-});
+})
 
 // слушатель на кнопку открытия окна полльзователя
 editButton.addEventListener("click", () => {
@@ -61,12 +55,12 @@ editButton.addEventListener("click", () => {
   jobInput.value = profileDescription.textContent;
 
   clearValidation(popupEdit);
-});
+})
 
 // слушатель на кнопку добавления карточки
 addButton.addEventListener("click", () => {
   openPopup(popupNewCard);
-});
+})
 
 // Закрытие нажатием на оверлей или крест
 popups.forEach((popup) => {
@@ -78,7 +72,7 @@ popups.forEach((popup) => {
       closePopup(popup);
     }
   });
-});
+})
 
 // элементы для попапа с картинкой
 const popupImageCard = document.querySelector(".popup_type_image");
@@ -112,20 +106,20 @@ function handleProfileFormSubmit(evt) {
   // вставить новые значения
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
- 
-  profileButton.textContent = 'Сохранение...'
-  
+
+  profileButton.textContent = "Сохранение...";
+
   //Отправка данных на сервер
   redactProfile({
     name: nameInput.value,
     about: jobInput.value,
   })
-  .then(() => {
-    profileButton.textContent = 'Сохранить'
-  })
-  .then(() => {
-    closePopup(popupEdit);
-  })
+    .then(() => {
+      profileButton.textContent = "Сохранить";
+    })
+    .then(() => {
+      closePopup(popupEdit);
+    });
 }
 
 // обработчик формы добавления информации профиля
@@ -135,20 +129,20 @@ profileForm.addEventListener("submit", handleProfileFormSubmit);
 function handleProfileAvatarSubmit(evt) {
   evt.preventDefault();
 
-  avatarButton.textContent = 'Сохранение...'
+  avatarButton.textContent = "Сохранение...";
   redactAvatar(avatarLink.value)
-  .then((data) => {
-    avatar.style.backgroundImage = `url(${data.avatar})`;
-    closePopup(popupAvatarEdit);
-    clearValidation(popupAvatarEdit);
-    evt.target.reset();
-  })
-  .then(() => {
-    avatarButton.textContent = 'Сохранить'
-  })
-  .catch((err) => {
-    console.log('Ошибка отправки аватарки:', err);
-  })
+    .then((data) => {
+      avatar.style.backgroundImage = `url(${data.avatar})`;
+      closePopup(popupAvatarEdit);
+      clearValidation(popupAvatarEdit);
+      evt.target.reset();
+    })
+    .then(() => {
+      avatarButton.textContent = "Сохранить";
+    })
+    .catch((err) => {
+      console.log("Ошибка отправки аватарки:", err);
+    });
 }
 
 // обработчик формы добавления нового аватара
@@ -171,21 +165,21 @@ function handleFormAddCard(evt) {
     link: newImage,
     alt: newPlaceName,
   };
-  newCardButton.textContent = 'Сохранение...'
+  newCardButton.textContent = "Сохранение...";
   addNewCard(newCard)
-  .then((data) => {
-    renderCard(data, "prepend");
-    //очистка поля
-    evt.target.reset();
-    closePopup(popupNewCard);
-    clearValidation(popupNewCard);
-  })
-  .then(() => {
-    newCardButton.textContent = 'Сохранить'
-  })
-  .catch((err) => {
-    console.log('Ошибка создания карточки:', err);
-  })
+    .then((data) => {
+      renderCard(data, "prepend");
+      //очистка поля
+      evt.target.reset();
+      closePopup(popupNewCard);
+      clearValidation(popupNewCard);
+    })
+    .then(() => {
+      newCardButton.textContent = "Сохранить";
+    })
+    .catch((err) => {
+      console.log("Ошибка создания карточки:", err);
+    });
 }
 
 // обработчик формы добавления новой карточки
@@ -204,16 +198,16 @@ enableValidation(validationConfig);
 let userId;
 
 Promise.all([getProfile(), getCards()])
-.then(([profileInfo, cards]) => {
-  userId = profileInfo._id;
-  profileTitle.textContent = profileInfo.name;
-  profileDescription.textContent = profileInfo.about;
-  avatar.style.backgroundImage = `url(${profileInfo.avatar})`;
+  .then(([profileInfo, cards]) => {
+    userId = profileInfo._id;
+    profileTitle.textContent = profileInfo.name;
+    profileDescription.textContent = profileInfo.about;
+    avatar.style.backgroundImage = `url(${profileInfo.avatar})`;
 
-  cards.forEach((item) => {
-    renderCard(item, "append", userId);
+    cards.forEach((item) => {
+      renderCard(item, "append", userId);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-})
-.catch((err) => {
-  console.log(err);
-})

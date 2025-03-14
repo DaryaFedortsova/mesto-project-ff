@@ -1,4 +1,3 @@
-
 // показать ошибку
 function showError(formElement, input, errorMessage) {
   const errorElement = formElement.querySelector(`.${input.id}-error`);
@@ -6,6 +5,7 @@ function showError(formElement, input, errorMessage) {
   errorElement.textContent = errorMessage;
   errorElement.classList.add("popup__error_visible");
 }
+
 //скрыть ошибку
 function hideError(formElement, input) {
   const errorElement = formElement.querySelector(`.${input.id}-error`);
@@ -13,6 +13,7 @@ function hideError(formElement, input) {
   errorElement.classList.remove("popup__error_visible");
   errorElement.textContent = "";
 }
+
 //проверка полей на валидность
 function isValid(formElement, input) {
   if (input.validity.patternMismatch) {
@@ -77,4 +78,4 @@ function toggleButtonState(inputs, button) {
   }
 }
 
-export { clearValidation, enableValidation }
+export { clearValidation, enableValidation };

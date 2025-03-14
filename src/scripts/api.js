@@ -4,7 +4,7 @@ const config = {
     authorization: "ce3e7b41-6515-4e50-831f-7896e40a48a0",
     "Content-Type": "application/json",
   },
-};
+}
 
 function getResponse(res) {
   if (res.ok) {
@@ -19,8 +19,7 @@ function getProfile() {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
     headers: config.headers,
-  })
-  .then(getResponse);
+  }).then(getResponse);
 }
 
 //изменение профиля
@@ -41,9 +40,9 @@ function redactAvatar(link) {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      avatar: link
+      avatar: link,
     }),
-}).then(getResponse);
+  }).then(getResponse);
 }
 
 //карточки
@@ -68,26 +67,35 @@ function addNewCard(cardItem) {
 
 //удаление карточки с сервера
 function deleteCardApi(cardId) {
-    return fetch(`${config.baseUrl}/cards/${cardId}`, {
-        method: "DELETE",
-        headers:config.headers
-    }).then(getResponse);
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(getResponse);
 }
 
 //Поставить лайк
 function putLike(cardId) {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
-    headers: config.headers
-    }).then(getResponse)
+    headers: config.headers,
+  }).then(getResponse);
 }
 
 //Убрать лайк
 function removeLike(cardId) {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
-    headers: config.headers
-    }).then(getResponse)
+    headers: config.headers,
+  }).then(getResponse);
 }
 
-export { getProfile, getCards, redactProfile, addNewCard, deleteCardApi, redactAvatar, putLike, removeLike };
+export {
+  getProfile,
+  getCards,
+  redactProfile,
+  addNewCard,
+  deleteCardApi,
+  redactAvatar,
+  putLike,
+  removeLike,
+}
