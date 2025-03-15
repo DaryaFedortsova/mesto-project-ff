@@ -209,5 +209,5 @@ Promise.all([getProfile(), getCards()])
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Ошибка при загрузке данных:", err);
   });

@@ -32,6 +32,10 @@ function createCard(item, deleteCard, openImagePopup, handleLikeButton, userId) 
   likeButton.addEventListener("click", () =>
     handleLikeButton(likeButton, item._id, likeCounter)
   );
+  
+  if (item.likes.some((like) => like._id === userId)) {
+    likeButton.classList.add("card__like-button_is-active");
+  }
 
   return patternCard;
 }
