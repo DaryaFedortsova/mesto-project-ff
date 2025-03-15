@@ -98,4 +98,4 @@ export {
   redactAvatar,
   putLike,
   removeLike,
-}
+};

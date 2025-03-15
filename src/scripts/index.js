@@ -1,4 +1,32 @@
 import "../pages/index.css";
+import {
+  placesList,
+  editButton,
+  popupEdit,
+  addButton,
+  popupNewCard,
+  popups,
+  popupAvatarEdit,
+  profileImage,
+  profileButton,
+  newCardButton,
+  avatarButton,
+  validationConfig,
+  popupImageCard,
+  popupImage,
+  popupTitle,
+  profileForm,
+  nameInput,
+  jobInput,
+  profileTitle,
+  profileDescription,
+  avatarForm,
+  avatarLink,
+  avatar,
+  formNewPlase,
+  placeName,
+  linkInput,
+} from "../utils/constants.js";
 import { createCard, handleLikeButton, deleteCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
 import { clearValidation, enableValidation } from "./validation.js";
@@ -9,26 +37,6 @@ import {
   addNewCard,
   redactAvatar,
 } from "./api.js";
-
-//выбираем место куда выгружается массив
-const placesList = document.querySelector(".places__list");
-const editButton = document.querySelector(".profile__edit-button");
-const popupEdit = document.querySelector(".popup_type_edit");
-const addButton = document.querySelector(".profile__add-button");
-const popupNewCard = document.querySelector(".popup_type_new-card");
-const popups = document.querySelectorAll(".popup");
-const popupAvatarEdit = document.querySelector(".popup_edit_avatar");
-const profileImage = document.querySelector(".profile__image");
-const profileButton = popupEdit.querySelector(".popup__button");
-const newCardButton = popupNewCard.querySelector(".popup__button");
-const avatarButton = popupAvatarEdit.querySelector(".popup__button");
-const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
 
 // универсальная функция добавления карточки
 // функция принимает в вызов карточку и метод вставки
@@ -45,7 +53,8 @@ function renderCard(element, method) {
 
 profileImage.addEventListener("click", () => {
   openPopup(popupAvatarEdit);
-})
+  clearValidation(popupAvatarEdit, validationConfig);
+});
 
 // слушатель на кнопку открытия окна полльзователя
 editButton.addEventListener("click", () => {
@@ -54,13 +63,14 @@ editButton.addEventListener("click", () => {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 
-  clearValidation(popupEdit);
-})
+  clearValidation(popupEdit, validationConfig);
+});
 
 // слушатель на кнопку добавления карточки
 addButton.addEventListener("click", () => {
   openPopup(popupNewCard);
-})
+  clearValidation(popupNewCard, validationConfig);
+});
 
 // Закрытие нажатием на оверлей или крест
 popups.forEach((popup) => {
@@ -72,12 +82,7 @@ popups.forEach((popup) => {
       closePopup(popup);
     }
   });
-})
-
-// элементы для попапа с картинкой
-const popupImageCard = document.querySelector(".popup_type_image");
-const popupImage = popupImageCard.querySelector(".popup__image");
-const popupTitle = popupImageCard.querySelector(".popup__caption");
+});
 
 // функция открытия попапа с картинкой
 function openImagePopup(item) {
@@ -88,37 +93,26 @@ function openImagePopup(item) {
   openPopup(popupImageCard);
 }
 
-// работа с инпутами в редакторе профиля
-const profileForm = document.forms["edit-profile"];
-const nameInput = profileForm.elements.name;
-const jobInput = profileForm.elements.description;
-const profileTitle = document.querySelector(".profile__title");
-const profileDescription = document.querySelector(".profile__description");
-//форма и инпут смены аватара
-const avatarForm = document.forms["avatar-edit"];
-const avatarLink = avatarForm.elements.avatar;
-const avatar = document.querySelector(".profile__image");
-
 //Обработчик «отправки» формы
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
-
-  // вставить новые значения
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
-
   profileButton.textContent = "Сохранение...";
-
   //Отправка данных на сервер
   redactProfile({
     name: nameInput.value,
     about: jobInput.value,
   })
     .then(() => {
-      profileButton.textContent = "Сохранить";
-    })
-    .then(() => {
+      // вставить новые значения
+      profileTitle.textContent = nameInput.value;
+      profileDescription.textContent = jobInput.value;
       closePopup(popupEdit);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      profileButton.textContent = "Сохранить";
     });
 }
 
@@ -128,35 +122,27 @@ profileForm.addEventListener("submit", handleProfileFormSubmit);
 //обработчик отправки ссылки на новый аватар
 function handleProfileAvatarSubmit(evt) {
   evt.preventDefault();
-
   avatarButton.textContent = "Сохранение...";
   redactAvatar(avatarLink.value)
     .then((data) => {
       avatar.style.backgroundImage = `url(${data.avatar})`;
       closePopup(popupAvatarEdit);
-      clearValidation(popupAvatarEdit);
       evt.target.reset();
-    })
-    .then(() => {
-      avatarButton.textContent = "Сохранить";
     })
     .catch((err) => {
       console.log("Ошибка отправки аватарки:", err);
+    })
+    .finally(() => {
+      avatarButton.textContent = "Сохранить";
     });
 }
 
 // обработчик формы добавления нового аватара
 avatarForm.addEventListener("submit", handleProfileAvatarSubmit);
 
-// инпуты добавления новой карточки
-const formNewPlase = document.forms["new-place"];
-const placeName = formNewPlase.elements["place-name"];
-const linkInput = formNewPlase.elements.link;
-
 // функция добавления новой карточки и информации к ней
 function handleFormAddCard(evt) {
   evt.preventDefault();
-
   const newPlaceName = placeName.value;
   const newImage = linkInput.value;
   //обьекты для новой карточки
@@ -172,13 +158,12 @@ function handleFormAddCard(evt) {
       //очистка поля
       evt.target.reset();
       closePopup(popupNewCard);
-      clearValidation(popupNewCard);
-    })
-    .then(() => {
-      newCardButton.textContent = "Сохранить";
     })
     .catch((err) => {
       console.log("Ошибка создания карточки:", err);
+    })
+    .finally(() => {
+      newCardButton.textContent = "Сохранить";
     });
 }
 

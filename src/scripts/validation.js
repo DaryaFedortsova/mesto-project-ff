@@ -1,21 +1,21 @@
 // показать ошибку
-function showError(formElement, input, errorMessage) {
+function showError(formElement, input, errorMessage, settings) {
   const errorElement = formElement.querySelector(`.${input.id}-error`);
-  input.classList.add("popup__input_type_error");
+  input.classList.add(settings.inputErrorClass);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add("popup__error_visible");
+  errorElement.classList.add(settings.errorClass);
 }
 
 //скрыть ошибку
-function hideError(formElement, input) {
+function hideError(formElement, input, settings) {
   const errorElement = formElement.querySelector(`.${input.id}-error`);
-  input.classList.remove("popup__input_type_error");
-  errorElement.classList.remove("popup__error_visible");
+  input.classList.remove(settings.inputErrorClass);
+  errorElement.classList.remove(settings.errorClass);
   errorElement.textContent = "";
 }
 
 //проверка полей на валидность
-function isValid(formElement, input) {
+function isValid(formElement, input, settings) {
   if (input.validity.patternMismatch) {
     input.setCustomValidity(input.dataset.errorMessage);
   } else {
@@ -23,17 +23,17 @@ function isValid(formElement, input) {
   }
 
   if (!input.validity.valid) {
-    showError(formElement, input, input.validationMessage);
+    showError(formElement, input, input.validationMessage, settings);
   } else {
-    hideError(formElement, input);
+    hideError(formElement, input, settings);
   }
 }
 
 //ф. валидация всех форм
-function enableValidation() {
-  const forms = Array.from(document.querySelectorAll(".popup__form"));
+function enableValidation(settings) {
+  const forms = Array.from(document.querySelectorAll(settings.formSelector));
   forms.forEach((formElement) => {
-    setEventListnersForInput(formElement);
+    setEventListnersForInput(formElement, settings);
   });
 }
 
@@ -45,28 +45,29 @@ function hasInvalidInput(inputs) {
 }
 
 //ф. очистки ошибок и дезактивации кнопки
-function clearValidation(popupForm) {
-  const inputs = Array.from(popupForm.querySelectorAll(".popup__input"));
-  const button = popupForm.querySelector(".popup__button");
+function clearValidation(popupForm, settings) {
+  const inputs = Array.from(popupForm.querySelectorAll(settings.inputSelector));
+  const button = popupForm.querySelector(settings.submitButtonSelector);
   inputs.forEach((input) => {
-    const errorElement = popupForm.querySelector(`.${input.id}-error`);
-    hideError(popupForm, input, errorElement);
+    hideError(popupForm, input, settings);
   });
 
   button.disabled = true;
 }
 
 //слушатели на поля ввода
-function setEventListnersForInput(formElement) {
-  const inputs = Array.from(formElement.querySelectorAll(".popup__input"));
-  const button = formElement.querySelector(".popup__button");
+function setEventListnersForInput(formElement, settings) {
+  const inputs = Array.from(
+    formElement.querySelectorAll(settings.inputSelector)
+  );
+  const button = formElement.querySelector(settings.submitButtonSelector);
   inputs.forEach((input) => {
     input.addEventListener("input", () => {
-      isValid(formElement, input);
-      toggleButtonState(inputs, button);
+      isValid(formElement, input, settings);
+      toggleButtonState(inputs, button, settings);
     });
   });
-  toggleButtonState(inputs, button);
+  toggleButtonState(inputs, button, settings);
 }
 
 //ф. состояния кнопки

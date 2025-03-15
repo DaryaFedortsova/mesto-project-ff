@@ -1,7 +1,13 @@
 import { deleteCardApi, putLike, removeLike } from "./api.js";
 const cardTemplate = document.querySelector("#card-template").content;
 // @todo: Функция создания карточки
-function createCard(item, deleteCard, openImagePopup, handleLikeButton, userId) {
+function createCard(
+  item,
+  deleteCard,
+  openImagePopup,
+  handleLikeButton,
+  userId
+) {
   //клонирование шаблона карточки
   const patternCard = cardTemplate.querySelector(".card").cloneNode(true);
   //определяем переменные для элементов карточки
@@ -32,7 +38,7 @@ function createCard(item, deleteCard, openImagePopup, handleLikeButton, userId) 
   likeButton.addEventListener("click", () =>
     handleLikeButton(likeButton, item._id, likeCounter)
   );
-  
+
   if (item.likes.some((like) => like._id === userId)) {
     likeButton.classList.add("card__like-button_is-active");
   }
@@ -43,11 +49,11 @@ function createCard(item, deleteCard, openImagePopup, handleLikeButton, userId) 
 //функция лайка
 function handleLikeButton(button, cardId, likeCounter) {
   const like = button.classList.contains("card__like-button_is-active");
-  button.classList.toggle("card__like-button_is-active");
   if (like) {
     removeLike(cardId)
       .then((update) => {
         likeCounter.textContent = update.likes.length;
+        button.classList.remove("card__like-button_is-active");
       })
       .catch((err) => {
         console.log("Ошибка удаления лайка:", err);
@@ -56,6 +62,7 @@ function handleLikeButton(button, cardId, likeCounter) {
     putLike(cardId)
       .then((update) => {
         likeCounter.textContent = update.likes.length;
+        button.classList.add("card__like-button_is-active");
       })
       .catch((err) => {
         console.log("Ошибка добавления лайка:", err);
